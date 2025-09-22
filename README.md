@@ -6,27 +6,21 @@ Microservice-E-Commerce, mikroservis mimarisi kullanılarak geliştirilmiş tam 
 
   Amaç: API Gateway olarak görev yapar, yani istemciden gelen istekleri ilgili mikroservislere yönlendirir.
 
-  Teknolojiler: Genellikle Ocelot gibi bir API Gateway kütüphanesi kullanılır.
-
   İçerik: Shop.OcelotGateway klasörü altında yapılandırma dosyaları ve yönlendirme ayarları bulunur.
 
 2. Aspire/
 
-  Amaç: Projeye özgü bir modül veya servis olabilir. Adından dolayı Aspire bir frontend framework veya bir servis olabilir.
+  Amaç: Uygulamanın ve servislerin daha kolay tek bir yerden kontrolünü ve izlemini kolaylaştırır.
 
-  İçerik: Detaylı bilgi için klasör içeriğine bakmak gerekir.
 
 3. Frontends/
 
   Amaç: Kullanıcı arayüzü (UI) bileşenlerini içerir.
 
-  İçerik: Web tabanlı frontend uygulamaları burada yer alır. Örneğin, React, Angular veya Vue.js gibi modern JavaScript frameworkleriyle geliştirilmiş olabilir.
 
 4. IdentityServer/
 
   Amaç: Kimlik doğrulama ve yetkilendirme işlemlerini yönetir.
-
-  Teknolojiler: IdentityServer4 veya benzeri bir kimlik yönetim kütüphanesi kullanılır.
 
   İçerik: Shop.IdentityServer klasörü altında kullanıcı yönetimi, JWT token üretimi ve OAuth2/OpenID Connect yapılandırmaları bulunur.
 
