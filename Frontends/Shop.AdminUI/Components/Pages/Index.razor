@@ -1,0 +1,52 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Shop.ServiceDistribute.Services
+@using Shop.ServiceDistribute.Services.CatalogServices.CategoryServices
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ICategoryService categoryService
+@inject NavigationManager navigationManager
+
+
+
+<h3>Profil Sayfası</h3>
+
+<p>Hoşgeldiniz, @userName!</p>
+
+
+@foreach (var item in resultCategoryDto)
+{
+    <p>@item.CategoryName</p>
+}
+
+@code {
+    private string userName;
+    private List<ResultCategoryDto> resultCategoryDto { get; set; } = new List<ResultCategoryDto>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        navigationManager.NavigateTo("/Login");
+    }
+
+    public async Task GetClaim()
+    {
+        // Kullanıcının kimlik doğrulama durumunu alıyoruz
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Kullanıcı bilgileri
+        var user = authState.User;
+
+        // Kullanıcının adını çekiyoruz
+        userName = user.Identity?.Name ?? "Anonim Kullanıcı"; // Eğer kimlik yoksa "Anonim Kullanıcı" göster
+    }
+
+
+
+    public async Task GetCategory()
+    {
+        resultCategoryDto = await categoryService.GetAllCategoryAsync();
+
+    }
+}

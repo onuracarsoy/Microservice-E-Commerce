@@ -1,0 +1,58 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using Shop.AdminUI
+@using Shop.AdminUI.Components
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.CategoryDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.ProductDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.FeatureSliderDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.SpecialOfferDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.FeatureServiceDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.ProductImageDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.ProductDetailDtos
+@using Shop.ServiceDistribute.Dtos.ReviewDtos.CommentDtos
+@using Shop.ServiceDistribute.Dtos.CatalogDtos.ContactDtos
+@using Shop.AdminUI.Components.Layout
+@using Shop.ServiceDistribute.Dtos.IdentityDtos.RegisterDtos
+@using Shop.ServiceDistribute.Dtos.IdentityDtos.LoginDtos
+@using System.Text.Json
+@using Shop.ServiceDistribute.Model
+@using System.Text
+@using Shop.ServiceDistribute.Services.Abstract
+@using Shop.ServiceDistribute.Services.Concrete
+@using Microsoft.AspNetCore.Authorization
+@using Shop.ServiceDistribute.Services.CatalogServices.CategoryServices
+@using Shop.ServiceDistribute.Services.CatalogServices.ProductServices
+@using Shop.ServiceDistribute.Services.ReviewServices.CommentServices
+@using Shop.ServiceDistribute.Services.CatalogServices.SpecialOfferServices
+@using Shop.ServiceDistribute.Services.CatalogServices.SliderServices
+@using Shop.ServiceDistribute.Services.CatalogServices.FeatureServiceServices
+@using Shop.ServiceDistribute.Services.CatalogServices.ProductImageServices
+@using Shop.ServiceDistribute.Services.CatalogServices.ProductDetailServices
+@using Shop.ServiceDistribute.Services.CatalogServices.ContactServices
+@using Shop.ServiceDistribute.Dtos.DiscountDtos.CouponDtos
+@using Shop.ServiceDistribute.Services.DiscountServices.CouponServices
+@using Shop.ServiceDistribute.Dtos.CargoDtos.CargoCompanyDtos
+@using Shop.ServiceDistribute.Services.CargoServices.CargoCompanyServices
+@using Shop.ServiceDistribute.Dtos.OrderDtos.OrderingDetailDto
+@using Shop.ServiceDistribute.Dtos.OrderDtos.OrderingDtos
+@using Shop.ServiceDistribute.Services.OrderServices.OrderingDetailServices
+@using Shop.ServiceDistribute.Services.OrderServices.OrderingServices
+@using Shop.ServiceDistribute.Dtos.CargoDtos.CargoCustomer
+@using Shop.ServiceDistribute.Dtos.CargoDtos.CargoDetailDtos
+@using Shop.ServiceDistribute.Dtos.CargoDtos.CargoOperationDtos
+@using Shop.ServiceDistribute.Services.CargoServices.CargoCustomerServices
+@using Shop.ServiceDistribute.Services.CargoServices.CargoDetailServices
+@using Shop.ServiceDistribute.Services.CargoServices.CargoOperationService
+@using Shop.ServiceDistribute.Services.OrderServices.AddressServices
+@using Microsoft.AspNetCore.SignalR.Client
+
+
+
+
+

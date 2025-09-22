@@ -1,0 +1,46 @@
+﻿@model List<GetByUserIdAddressDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/_UILayout.cshtml";
+}
+
+<div class="container-fluid">
+    <form method="post" asp-action="Index" asp-controller="Order">
+    <div class="row px-xl-5">
+
+       @*  @await Component.InvokeAsync("_OrderAddressComponentPartial") *@
+
+        <div class="col-lg-8 table-responsive mb-5">
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Teslimat Adresi</span></h5>
+
+            <table class="table table-light table-borderless table-hover text-center mb-0">
+                <tbody class="align-middle">
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                <input type="radio" value="@item.AddressID" name="AddressId" class="btn-check" autocomplete="off" checked>
+                            </td>
+                            <td class="align-middle"> @item.Name @item.Surname</td>
+                            <td class="align-middle"> @item.Phone</td>
+                            <td class="align-middle"> @item.AddressCity , @item.AddressDistrict</td>
+                            <td class="align-middle"> @item.AddressDetail</td>
+                        </tr>
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+          <div class="col-lg-4">
+            @await Component.InvokeAsync("_OrderSummaryComponentPartial")
+            <button type ="submit" class="btn btn-block btn-primary font-weight-bold py-3" >Onayla ve Ödemeye Geç</button>
+        </div>
+        </div>
+    </form>
+    </div>
+</div>
+
+

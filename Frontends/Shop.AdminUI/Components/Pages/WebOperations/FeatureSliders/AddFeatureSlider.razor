@@ -1,0 +1,36 @@
+﻿@page "/AddFeatureSlider"
+@inject IFeatureSliderService featureSliderService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Slider Oluştur</h4>
+        <EditForm Model="createFeatureSliderDto" FormName="AddFeatureSlider" OnValidSubmit="FeatureSliderAdd">
+
+            <div class="form-group">
+                <label for="FeatureSliderName">Resim</label>
+                <InputText id="FeatureSliderImageUrl" @bind-Value="createFeatureSliderDto.FeatureSliderImageUrl" class="form-control" />
+                <label for="FeatureSliderName">Başlık</label>
+                <InputText id="FeatureSliderTitle" @bind-Value="createFeatureSliderDto.FeatureSliderTitle" class="form-control" />
+                <label for="FeatureSliderName">Açıklama</label>
+                <InputTextArea id="FeatureSliderDescription" @bind-Value="createFeatureSliderDto.FeatureSliderDescription" class="form-control" />
+            </div>
+            <button class="btn btn-success" type="submit">Kaydet</button>
+            <a class="btn btn-danger" href="FeatureSliderList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateFeatureSliderDto createFeatureSliderDto { get; set; } = new CreateFeatureSliderDto();
+
+    public async Task FeatureSliderAdd()
+    {
+
+        await featureSliderService.CreateFeatureSliderAsync(createFeatureSliderDto);
+        NavigationManager.NavigateTo("/FeatureSliderList");
+
+    }
+
+}

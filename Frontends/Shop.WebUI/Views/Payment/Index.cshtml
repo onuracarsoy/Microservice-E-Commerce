@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/_UILayout.cshtml";
+}
+
+
+
+
+<style>
+
+    .credit-card-form {
+        max-width: 500px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-logo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+
+
+    <div class="credit-card-form">
+        <div class="card-logo mb-4">
+            <h4> Kart Bilgileri</h4>
+            <img src="https://via.placeholder.com/50" alt="Card Logo">
+        </div>
+        <form>
+            <div class="mb-3">
+                <label for="cardName" class="form-label">Kart Sahibinin Adı</label>
+                <input type="text" class="form-control" id="cardName" placeholder="Ad Soyad" required>
+            </div>
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Kart Numarası</label>
+                <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+            </div>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label for="expiryDate" class="form-label">Son Kullanma Tarihi</label>
+                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="password" class="form-control" id="cvv" placeholder="XXX" maxlength="3" required>
+                </div>
+            </div>
+            @* <button type="submit" class="btn btn-primary mt-4 w-100" >Ödemeyi Tamamla</button> *@
+            <a href="/Payment/CompleteOrder" class="btn btn-primary mt-4 w-100" >Ödemeyi Tamamla</a>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Kredi kartı numarası otomatik boşluk ekleme
+        const cardNumberInput = document.getElementById('cardNumber');
+        cardNumberInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '')
+                .replace(/(\d{4})(?=\d)/g, '$1 ');
+        });
+
+        // Son Kullanma Tarihi Formatlama
+        const expiryDateInput = document.getElementById('expiryDate');
+        expiryDateInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '')
+                .replace(/(\d{2})(?=\d)/g, '$1/')
+                .slice(0, 5);
+        });
+    </script>
+
+
+
+

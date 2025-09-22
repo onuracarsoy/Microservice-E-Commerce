@@ -1,0 +1,104 @@
+﻿@page "/Login"
+
+@*  @using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http.Headers
+@inject CustomAuthenticationStateProvider CustomAuthProvider
+@inject IHttpClientFactory _httpClientFactory *@
+@inject NavigationManager NavigationManager
+@inject IIdentityForAdminService identityForAdminService
+@layout FormLayout
+
+
+<div class="form-v4-content">
+
+    <EditForm class="form-detail" Enhance="true" FormName="LoginForm" Model="userLoginDto" OnValidSubmit="UseUser" style="background: #FFD22F;">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <h2>Giriş Yap</h2>
+
+        <div class="form-group">
+            <div class="form-row">
+                <label for="your_email">Email Adresiniz</label>
+                <InputText @bind-Value="userLoginDto.Email" class="input-text" />
+                <ValidationMessage class="alert alert-danger" For="() => userLoginDto.Email"></ValidationMessage>
+            </div>
+            </div>
+
+        <div class="form-group">
+            <div class="form-row ">
+                <label for="password">Şifreniz</label>
+                <InputText @bind-Value="userLoginDto.Password" type="password" class="input-text" />
+                <ValidationMessage class="alert alert-danger" For="() => userLoginDto.Password"></ValidationMessage>
+                @{
+                    MarkupString errorMessage = wrongMessage
+                    ? (MarkupString)"<div class='alert alert-danger' role='alert'>Mail veya şifre yanlış!</div>"
+                    : (MarkupString)"";
+                }
+
+                @if (wrongMessage)
+                {
+                    @errorMessage
+                }
+            </div>
+
+
+        </div>
+
+        <div class="form-row-last">
+            <button type="submit" class="register">Giriş Yap</button>
+        </div>
+
+    </EditForm>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private UserLoginDto userLoginDto { get; set; } = new UserLoginDto();
+    private string errorMessage;
+    private bool wrongMessage = false;
+
+    public async Task UseUser()
+    {
+
+        var result = await identityForAdminService.SignIn(userLoginDto);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/Statistics");
+        }
+        else
+        {
+            wrongMessage = true;
+
+        }
+
+    }
+
+    #region CustomAuthProvider Yöntemi
+    // public async Task UseUser()
+    // {
+    //     var client = _httpClientFactory.CreateClient();
+    //     var content = JsonSerializer.Serialize(userLoginDto);
+    //     StringContent stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+    //     var responseMessage = await client.PostAsync("http://localhost:5001/api/Logins", stringContent);
+    //     if (responseMessage.IsSuccessStatusCode)
+    //     {
+    //         var jsonData = await responseMessage.Content.ReadAsStringAsync();
+    //         var tokenModel = JsonSerializer.Deserialize<JwtResponseModel>(jsonData, new JsonSerializerOptions
+    //             {
+    //                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    //             });
+
+    //         if (tokenModel?.Token != null)
+    //         {
+    //             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenModel.Token);
+    //             CustomAuthProvider.MarkUserAsAuthenticated(tokenModel.Token);
+    //              NavigationManager.NavigateTo("/");
+    //         }
+    //     }
+    #endregion
+
+}
+
+
+
+

@@ -1,0 +1,79 @@
+﻿@page "/UserList"
+@inject IUserService userService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kullanıcı İşlemleri</h4>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ad</th>
+                        <th>Soyad</th>
+                        <th>Mail</th>
+                   @*      <th>Düzenle</th> *@
+                        <th>Sil</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultUserDto is not null)
+                    {
+                        @foreach (var item in resultUserDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.ID</th>
+                                <td>@item.Name</td>
+                                <td>@item.Surname</td>
+                                <td>@item.Email</td>
+                                @* <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.ID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td> *@
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteUser(item.ID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<UserDetailViewModel>? resultUserDto { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUserList();
+    }
+
+    public async Task GetUserList()
+    {
+        resultUserDto = await userService.GetAllUserList();
+
+    }
+
+
+    public async Task DeleteUser(string id)
+    {
+        await userService.DeleteUser(id);
+
+        await GetUserList();
+
+    }
+}

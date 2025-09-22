@@ -1,0 +1,59 @@
+﻿@model List<BasketItemDto>
+
+<div class="col-lg-8 table-responsive mb-5">
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-light table-borderless table-hover text-center mb-0">
+            <thead class="thead-dark">
+                <tr>
+                    <th></th>
+                    <th>Ürün</th>
+                    <th>Fiyat</th>
+                    <th>Miktar</th>
+                    <th>Toplam</th>
+                    <th>Kaldır</th>
+                </tr>
+            </thead>
+            <tbody class="align-middle">
+
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td class="align-middle"><img src="@item.ProductImageUrl" alt="" style="height: 100px ;width: 100px;"></td>
+                        <td class="align-middle"> @item.ProductName</td>
+                        <td class="align-middle">@item.Price ₺</td>
+                        <td class="align-middle">
+                            <div class="input-group quantity mx-auto" style="width: 100px;">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-primary btn-minus">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="@item.Quantity">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-sm btn-primary btn-plus">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle">@(@item.Price * @item.Quantity) ₺</td>
+                        <td class="align-middle"><a class="btn btn-sm btn-danger" href="/ShoppingCart/RemoveBasketItem/@item.ProductID"><i class="fa fa-times"></i></a></td>
+                    </tr>
+
+
+                }
+
+
+            </tbody>
+        </table>
+    }
+    else
+    {
+
+        <h1 class="text-center"><i class="fa fa-shopping-cart fa-3x" aria-hidden="true"></i></h1>
+        <h1 class="text-center">Sepetinizde Ürün Bulunmamaktadır</h1>
+
+    }
+</div>

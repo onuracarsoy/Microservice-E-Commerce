@@ -1,0 +1,151 @@
+﻿@page "/ProductDetails/{ID}"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inject IProductDetailService productDetailService
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+
+        @if (getByIdProductDetailDto is not null)
+        {
+            <h4>Detay İşlemleri</h4>
+            <div class="bs-example" data-example-id="hoverable-table">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Açıklama</th>
+                            <th>Bilgi</th>
+                            <th>Düzenle</th>
+                            <th>Sil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        <tr>
+                            <th scope="row">@getByIdProductDetailDto.ProductDetailID</th>
+                            <td>@getByIdProductDetailDto.ProductDetailDescription</td>
+                            <td>@getByIdProductDetailDto.ProductDetailInfo</td>
+                            <td>
+                                <button class="btn btn-warning" @onclick="() => ToggleUpdateState(getByIdProductDetailDto.ProductDetailID)">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="async () => { await DeleteProductDetail(getByIdProductDetailDto.ProductDetailID); }">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @if (getByIdProductDetailDto.IsActive)
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <EditForm Model="updateProductDetailDto" OnValidSubmit="UpdateProductDetail">
+                                        <InputText @bind-Value="updateProductDetailDto.ProductDetailID" hidden></InputText>
+                                        <div class="form-group">
+                                            <label for="ProductDetailDescription">Açıklama</label>
+                                            <InputText id="ProductDetailDescription" @bind-Value="updateProductDetailDto.ProductDetailDescription" class="form-control" />
+
+                                            <label for="ProductDetailInfo">Bilgi</label>
+                                            <InputText id="ProductDetailInfo" @bind-Value="updateProductDetailDto.ProductDetailInfo" class="form-control" />
+
+
+
+                                        </div>
+                                        <button class="btn btn-success" type="submit">Kaydet</button>
+                                    </EditForm>
+                                </td>
+
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h4>Ürün Detayı Ekle</h4>
+            <p class="text-warning">Ürün Detaylarınız bulunmuyor! İşlem yapabilmek için lütfen detay ekleyin.</p>
+
+            <EditForm Model="createProductDetailDto" FormName="AddProductDetail" OnValidSubmit="ProductDetailAdd">
+
+                <div class="form-group">
+                    <label for="ProductDetailDescription">Açıklama</label>
+                    <InputText id="ProductDetailDescription" @bind-Value="createProductDetailDto.ProductDetailDescription" class="form-control" />
+
+                    <label for="ProductDetailInfo">Bilgi</label>
+                    <InputText id="ProductDetailInfo" @bind-Value="createProductDetailDto.ProductDetailInfo" class="form-control" />
+
+
+                </div>
+                <button class="btn btn-success" type="submit">Kaydet</button>
+                <a class="btn btn-danger" href="ProductList">İptal</a>
+            </EditForm>
+
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string ID { get; set; }
+    private GetByIdProductDetailDto? getByIdProductDetailDto { get; set; }
+    private UpdateProductDetailDto? updateProductDetailDto { get; set; } = new UpdateProductDetailDto();
+    private CreateProductDetailDto? createProductDetailDto { get; set; } = new CreateProductDetailDto();
+
+
+    public async Task ToggleUpdateState(string productDetailId)
+    {
+
+        getByIdProductDetailDto.IsActive = !getByIdProductDetailDto.IsActive;
+
+
+        updateProductDetailDto = await productDetailService.GetByIdProductDetailForUpdateAsync(productDetailId);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProductDetails();
+
+    }
+
+    public async Task GetProductDetails()
+    {
+
+        getByIdProductDetailDto = await productDetailService.GetByProductIDProductDetailAsync(ID);
+
+    }
+
+    public async Task DeleteProductDetail(string id)
+    {
+        await productDetailService.DeleteProductDetailAsync(id);
+        await GetProductDetails();
+
+    }
+
+    public async Task UpdateProductDetail()
+    {
+        await productDetailService.UpdateProductDetailAsync(updateProductDetailDto);
+        await GetProductDetails();
+
+    }
+
+    public async Task ProductDetailAdd()
+    {
+        createProductDetailDto.ProductID = ID;
+        await productDetailService.CreateProductDetailAsync(createProductDetailDto);
+
+        NavigationManager.NavigateTo($"/ProductDetails/{ID}");
+        await GetProductDetails();
+
+
+    }
+
+
+}

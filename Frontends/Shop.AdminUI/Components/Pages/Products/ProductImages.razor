@@ -1,0 +1,166 @@
+﻿@page "/ProductImages/{ID}"
+@inject IProductImageService productImageService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+
+        @if (getByIdProductImageDto is not null)
+        {
+            <h4>Görsel İşlemleri</h4>
+            <div class="bs-example" data-example-id="hoverable-table">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Görsel 1</th>
+                            <th>Görsel 2</th>
+                            <th>Görsel 3</th>
+                            <th>Görsel 4</th>
+                            <th>Düzenle</th>
+                            <th>Sil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        <tr>
+                            <th scope="row">@getByIdProductImageDto.ProductImageID</th>
+                            <td><img src="@getByIdProductImageDto.ProductImage1" style="height:50px; width:50px;" /></td>
+                            <td><img src="@getByIdProductImageDto.ProductImage2" style="height:50px; width:50px;" /></td>
+                            <td><img src="@getByIdProductImageDto.ProductImage3" style="height:50px; width:50px;" /></td>
+                            <td><img src="@getByIdProductImageDto.ProductImage4" style="height:50px; width:50px;" /></td>
+                            <td>
+                                <button class="btn btn-warning" @onclick="() => ToggleUpdateState(getByIdProductImageDto.ProductImageID)">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="async () => { await DeleteProductImage(getByIdProductImageDto.ProductImageID); }">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @if (getByIdProductImageDto.IsActive)
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <EditForm Model="updateProductImageDto" OnValidSubmit="UpdateProductImage">
+                                        <InputText @bind-Value="updateProductImageDto.ProductImageID" hidden></InputText>
+                                        <div class="form-group">
+                                            <label for="Image1">Görsel 1</label>
+                                            <InputText id="Image1" @bind-Value="updateProductImageDto.ProductImage1" class="form-control" />
+
+                                            <label for="Image2">Görsel 2</label>
+                                            <InputText id="Image2" @bind-Value="updateProductImageDto.ProductImage2" class="form-control" />
+
+                                            <label for="Image3">Görsel 3</label>
+                                            <InputText id="Image3" @bind-Value="updateProductImageDto.ProductImage3" class="form-control" />
+
+                                            <label for="Image4">Görsel 4</label>
+                                            <InputText id="Image4" @bind-Value="updateProductImageDto.ProductImage4" class="form-control" />
+
+                                        </div>
+                                        <button class="btn btn-success" type="submit">Kaydet</button>
+                                    </EditForm>
+                                </td>
+
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+
+        }
+        else
+        {
+            <h4>Ürün Görseli Ekle</h4>
+            <p class="text-warning">Ürün Görselleriniz bulunmuyor! İşlem yapabilmek için lütfen görseller ekleyin.</p>
+
+            <EditForm Model="createProductImageDto" FormName="AddProductImage" OnValidSubmit="ProductImageAdd">
+
+                <div class="form-group">
+                    <label for="Image1">Görsel 1</label>
+                    <InputText id="Image1" @bind-Value="createProductImageDto.ProductImage1" class="form-control" />
+
+                    <label for="Image2">Görsel 2</label>
+                    <InputText id="Image2" @bind-Value="createProductImageDto.ProductImage2" class="form-control" />
+
+                    <label for="Image3">Görsel 3</label>
+                    <InputText id="Image3" @bind-Value="createProductImageDto.ProductImage3" class="form-control" />
+
+                    <label for="Image4">Görsel 4</label>
+                    <InputText id="Image4" @bind-Value="createProductImageDto.ProductImage4" class="form-control" />
+                </div>
+                <button class="btn btn-success" type="submit">Kaydet</button>
+                <button class="btn btn-danger" @onclick="@(() => NavigationManager.NavigateTo("/ProductList", forceLoad: false))">Geri</button>
+
+            </EditForm>
+
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string ID { get; set; }
+    private GetByIdProductImageDto? getByIdProductImageDto { get; set; }
+    private UpdateProductImageDto? updateProductImageDto { get; set; } = new UpdateProductImageDto();
+    private CreateProductImageDto? createProductImageDto { get; set; } = new CreateProductImageDto();
+
+
+    public async Task ToggleUpdateState(string productImageId)
+    {
+
+        getByIdProductImageDto.IsActive = !getByIdProductImageDto.IsActive;
+
+        updateProductImageDto = await productImageService.GetByIdProductImageForUpdateAsync(productImageId);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProductImages();
+
+    }
+
+    public async Task GetProductImages()
+    {
+        
+        getByIdProductImageDto = await productImageService.GetByProductIDProductImageAsync(ID);
+
+
+    }
+
+    public async Task DeleteProductImage(string id)
+    {
+        await productImageService.DeleteProductImageAsync(id);
+        // NavigationManager.NavigateTo("/ProductList");
+        await GetProductImages();
+
+    }
+
+    public async Task UpdateProductImage()
+    {
+        await productImageService.UpdateProductImageAsync(updateProductImageDto);
+        await GetProductImages();
+
+    }
+
+    public async Task ProductImageAdd()
+    {
+        createProductImageDto.ProductID = ID;
+        await productImageService.CreateProductImageAsync(createProductImageDto);
+
+        NavigationManager.NavigateTo($"/ProductImages/{ID}");
+        await GetProductImages();
+
+
+    }
+
+
+}

@@ -1,0 +1,34 @@
+﻿@page "/AddCargoCompany"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject ICargoCompanyService cargoCompanyService
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kategori Oluştur</h4>
+        <EditForm Model="createCargoCompanyDto" FormName="AddCargoCompany" OnValidSubmit="CargoCompanyAdd">
+            <div class="form-group">
+                <label for="CargoCompanyName">Kargo Şirketi Adı</label>
+                <InputText id="CargoCompanyImaCargoCompanyNamegeUrl"
+                           @bind-Value="createCargoCompanyDto.CargoCompanyName"
+                           class="form-control" />
+
+            </div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a class="btn btn-danger" href="CargoCompanyList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateCargoCompanyDto createCargoCompanyDto { get; set; } = new CreateCargoCompanyDto();
+
+    public async Task CargoCompanyAdd()
+    {
+        await cargoCompanyService.CreateCargoCompanyAsync(createCargoCompanyDto);
+        NavigationManager.NavigateTo("/CargoCompanyList");
+
+    }
+
+}

@@ -1,0 +1,56 @@
+﻿@page "/AddProduct"
+@inject IProductService productService
+@inject ICategoryService categoryService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+
+    <div class="chart-box">
+        <h4>Ürün Oluştur</h4>
+        <EditForm Model="createProductDto" OnValidSubmit="ProductAdd">
+            <div class="form-group">
+                <label for="ProductName">Ürün Adı</label>
+                <InputText id="ProductName" @bind-Value="createProductDto.ProductName" class="form-control" />
+                <label for="ProductName">Kategori</label>
+                <select @bind="createProductDto.CategoryID" class="form-control">
+                    @foreach (var item in resultCategoryDto)
+                    {
+                        <option value="@item.CategoryID" selected="@(createProductDto.CategoryID == item.CategoryID)">@item.CategoryName</option>
+                    }
+                </select>
+                <label for="ProductName">Ürün Resmi</label>
+                <InputText id="ProductImageUrl" @bind-Value="createProductDto.ProductImageUrl" class="form-control" />
+                <label for="ProductName">Fiyatı</label>
+                <InputNumber id="ProductPrice" @bind-Value="createProductDto.ProductPrice" class="form-control" />
+                <label for="ProductName">Açıklaması</label>
+                <InputTextArea id="ProductDescription" @bind-Value="createProductDto.ProductDescription" class="form-control" />
+            </div>
+            <button class="btn btn-success" type="submit">Kaydet</button>
+            <a class="btn btn-danger" href="ProductList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateProductDto? createProductDto { get; set; } = new CreateProductDto();
+    private List<ResultCategoryDto>? resultCategoryDto { get; set; } = new List<ResultCategoryDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategoryList();
+    }
+    public async Task GetCategoryList()
+    {
+        resultCategoryDto = await categoryService.GetAllCategoryAsync();
+
+    }
+    public async Task ProductAdd()
+    {
+        await productService.CreateProductAsync(createProductDto);
+        NavigationManager.NavigateTo("/ProductList");
+
+    }
+
+
+}
+

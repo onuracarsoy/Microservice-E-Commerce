@@ -1,0 +1,42 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>6bb3a1db-27a5-44e1-932e-ba0e25ee9c80</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApiGateway\Shop.OcelotGateway\Shop.OcelotGateway.csproj" />
+    <ProjectReference Include="..\..\Frontends\Shop.AdminUI\Shop.AdminUI.csproj" />
+    <ProjectReference Include="..\..\Frontends\Shop.WebUI\Shop.WebUI.csproj" />
+    <ProjectReference Include="..\..\IdentityServer\Shop.IdentityServer\Shop.IdentityServer.csproj" />
+    <ProjectReference Include="..\..\Services\Basket\Shop.Basket\Shop.Basket.csproj" />
+    <ProjectReference Include="..\..\Services\Cargo\Shop.Cargo.WebApi\Shop.Cargo.WebApi.csproj" />
+    <ProjectReference Include="..\..\Services\Catalog\Shop.Catalog\Shop.Catalog.csproj" />
+    <ProjectReference Include="..\..\Services\Discount\Shop.Discount\Shop.Discount.csproj" />
+    <ProjectReference Include="..\..\Services\Message\Shop.Message\Shop.Message.csproj" />
+    <ProjectReference Include="..\..\Services\Order\Presentation\Shop.Order.WebApi\Shop.Order.WebApi.csproj" />
+    <ProjectReference Include="..\..\Services\Review\Shop.Review\Shop.Review.csproj" />
+    <ProjectReference Include="..\..\Services\SignalR\Shop.SignalR\Shop.SignalR.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.0.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

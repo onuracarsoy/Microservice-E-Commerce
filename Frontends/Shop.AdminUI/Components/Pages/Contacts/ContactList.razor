@@ -1,0 +1,138 @@
+﻿@page "/ContactList"
+@inject IContactService contactService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>İletişim İşlemleri</h4>
+        <h5 class="text-danger">Okunmamış Mesajlar</h5>
+        <a class="btn btn-primary" href="ContactListWithRead"><i class="fa fa-eye" aria-hidden="true"></i> Okunmuş Mesajlar</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Gönderen</th>
+                        <th>Konu</th>
+                        <th>Mesaj</th>
+                        <th>Tarih</th>
+                        <th>Durum</th>
+                    @*     <th>Düzenle</th> *@
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultContactDto is not null)
+                    {
+                        @foreach (var item in resultContactDto)
+                        {
+                            if (item.ContactIsRead == false)
+                            {
+                                <tr>
+                                    <th scope="row">@item.ContactID</th>
+                                    <td>@item.ContactNameSurname</td>
+                                    <td>@item.ContactSubject</td>
+                                    <td>@item.ContactMessage</td>
+                                    <td>@item.ContactSendDate</td>
+                                    <td><button class="@(item.ContactIsRead == true ? "btn btn-danger" : "btn btn-success" )" @onclick="() => ContactChangeToReadStatus(item.ContactID)" > <i class="@(item.ContactIsRead ? " fa fa-eye-slash" : "fa fa-eye" )" aria-hidden="true"></i></button></td>
+                                   @*  <td>
+                                        <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.ContactID)">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </button>
+                                    </td> *@
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="async () => { await DeleteContact(item.ContactID); }">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                @if (item.IsActive)
+                                {
+                                    <tr>
+                                        @*      <td colspan="2">
+                        <EditForm Model="updateContactDto" OnValidSubmit="UpdateContact">
+                        <InputText @bind-Value="updateContactDto.ContactID" hidden></InputText>
+                        <div class="form-group">
+                        <label for="ContactImageUrl">Resmi</label>
+                        <InputText id="ContactImageUrl"
+                        @bind-Value="updateContactDto.ContactImageUrl"
+                        class="form-control" />
+
+                        <label for="ContactName">Kategori Adı</label>
+                        <InputText id="ContactName"
+                        @bind-Value="updateContactDto.ContactName"
+                        class="form-control" />
+                        </div>
+                        <button class="btn btn-success" type="submit">Kaydet</button>
+                        </EditForm>
+                        </td> *@
+
+                                    </tr>
+                                }
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultContactDto>? resultContactDto { get; set; }
+    private UpdateContactDto? updateContactDto { get; set; } = new UpdateContactDto();
+
+
+    public async Task ToggleUpdateState(string contactId)
+    {
+        foreach (var contact in resultContactDto)
+        {
+            contact.IsActive = contact.ContactID == contactId ? !contact.IsActive : false;
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetContactList();
+    }
+
+    public async Task GetContactList()
+    {
+        resultContactDto = await contactService.GetAllContactAsync();
+
+
+    }
+
+    public async Task DeleteContact(string id)
+    {
+        await contactService.DeleteContactAsync(id);
+        await GetContactList();
+
+    }
+
+    public async Task UpdateContact()
+    {
+
+        await contactService.UpdateContactAsync(updateContactDto);
+        await GetContactList();
+
+    }
+
+    public async Task ContactChangeToReadStatus(string id)
+    {
+
+        await contactService.ContactChangeToReadStatusAsync(id);
+
+        await GetContactList();
+
+    }
+
+
+}

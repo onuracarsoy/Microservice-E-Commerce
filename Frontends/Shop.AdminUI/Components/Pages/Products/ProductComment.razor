@@ -1,0 +1,238 @@
+﻿@page "/ProductComments/{ID}"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inject ICommentService commentService
+@attribute [Authorize]
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Yorum İşlemleri</h4>
+        <h5 class="text-success">Onaylanmış</h5>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Yorum</th>
+                        <th>Puan</th>
+                        <th>Tarih</th>
+                        <th>Red İşlemi</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (resultCommentDto is not null)
+                    {
+                        @foreach (var item in resultCommentDto)
+                        {
+                            if (item.CommentStatus)
+                            {
+                               
+                                <tr>
+                                    <th scope="row">@item.CommentID</th>
+                                    <td>@item.CommentNameSurname</td>
+                                    <td>@item.CommentEmail</td>
+                                    <td>@item.CommentDetail</td>
+                                    <td>@item.CommentRate</td>
+                                    <td>@item.CommentCreateDate</td>
+                                    <td><button class="@(item.CommentStatus == true ? "btn btn-danger" : "btn btn-success" )" @onclick="() => CommentChangeToStatus(item.CommentID)"> <i class="@(item.CommentStatus ? "fa fa-times" : "fa fa-check")" aria-hidden="true"></i></button></td>
+
+                                    <td>
+                                        <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.CommentID)">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="async () => { await DeleteComment(item.CommentID); }">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                @if (item.IsActive)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            <EditForm Model="updateCommentDto" OnValidSubmit="UpdateComment">
+                                                <InputNumber @bind-Value="updateCommentDto.CommentID" hidden></InputNumber>
+                                                <div class="form-group">
+                                                    <label for="CommentNameSurname">Ad Soyad</label>
+                                                    <InputText id="CommentNameSurname" @bind-Value="updateCommentDto.CommentNameSurname" class="form-control" />
+
+                                                    <label for="CommentEmail">Email</label>
+                                                    <InputText id="CommentEmail" @bind-Value="updateCommentDto.CommentEmail" class="form-control" />
+
+                                                    <label for="CommentDetail">Yorum</label>
+                                                    <InputTextArea id="CommentDetail" @bind-Value="updateCommentDto.CommentDetail" class="form-control" />
+
+                                                    <label for="CommentRate">Puan</label>
+                                                    <InputNumber id="CommentRate" @bind-Value="updateCommentDto.CommentRate" class="form-control" />
+
+                                                    <label for="CommentCreateDate"></label>
+                                                    <InputDate id="CommentCreateDate" @bind-Value="updateCommentDto.CommentCreateDate" class="form-control" />
+
+                                                </div>
+                                                <button class="btn btn-success" type="submit">Kaydet</button>
+                                            </EditForm>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                           
+                        }
+                   
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="chart-box">
+        <h5 class ="text-danger">Onaylanmamış</h5>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Yorum</th>
+                        <th>Puan</th>
+                        <th>Tarih</th>
+                        <th>Onay İşlemi</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (resultCommentDto is not null)
+                    {
+                        @foreach (var item in resultCommentDto)
+                        {
+                            if (item.CommentStatus == false)
+                            {
+
+                                <tr>
+                                    <th scope="row">@item.CommentID</th>
+                                    <td>@item.CommentNameSurname</td>
+                                    <td>@item.CommentEmail</td>
+                                    <td>@item.CommentDetail</td>
+                                    <td>@item.CommentRate</td>
+                                    <td>@item.CommentCreateDate</td>
+                                    <td><button class="@(item.CommentStatus == true ? "btn btn-danger" : "btn btn-success" )" @onclick="() => CommentChangeToStatus(item.CommentID)"> <i class="@(item.CommentStatus ? "fa fa-times" : "fa fa-check")" aria-hidden="true"></i></button></td>
+
+                                    <td>
+                                        <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.CommentID)">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="async () => { await DeleteComment(item.CommentID); }">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                @if (item.IsActive)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            <EditForm Model="updateCommentDto" OnValidSubmit="UpdateComment">
+                                                <InputNumber @bind-Value="updateCommentDto.CommentID" hidden></InputNumber>
+                                                <div class="form-group">
+                                                    <label for="CommentNameSurname">Ad Soyad</label>
+                                                    <InputText id="CommentNameSurname" @bind-Value="updateCommentDto.CommentNameSurname" class="form-control" />
+
+                                                    <label for="CommentEmail">Email</label>
+                                                    <InputText id="CommentEmail" @bind-Value="updateCommentDto.CommentEmail" class="form-control" />
+
+                                                    <label for="CommentDetail">Yorum</label>
+                                                    <InputTextArea id="CommentDetail" @bind-Value="updateCommentDto.CommentDetail" class="form-control" />
+
+                                                    <label for="CommentRate">Puan</label>
+                                                    <InputNumber id="CommentRate" @bind-Value="updateCommentDto.CommentRate" class="form-control" />
+
+                                                    <label for="CommentCreateDate"></label>
+                                                    <InputDate id="CommentCreateDate" @bind-Value="updateCommentDto.CommentCreateDate" class="form-control" />
+
+                                                </div>
+                                                <button class="btn btn-success" type="submit">Kaydet</button>
+                                            </EditForm>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string ID { get; set; }
+    private List<ResultCommentDto>? resultCommentDto { get; set; }
+    private UpdateCommentDto? updateCommentDto { get; set; } = new UpdateCommentDto();
+
+
+    public async Task ToggleUpdateState(int commentId)
+    {
+
+        foreach (var comment in resultCommentDto)
+        {
+            comment.IsActive = comment.CommentID == commentId ? !comment.IsActive : false;
+        }
+
+        updateCommentDto = await commentService.GetByIdCommentForUpdateAsync(commentId);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCommentList();
+
+    }
+
+    public async Task GetCommentList()
+    {
+
+        resultCommentDto = await commentService.GetCommentByProductID(ID);
+
+    }
+
+    public async Task DeleteComment(int id)
+    {
+        await commentService.DeleteComment(id);
+        await GetCommentList();
+
+    }
+
+    public async Task UpdateComment()
+    {
+        await commentService.UpdateComment(updateCommentDto);
+        await GetCommentList();
+
+    }
+
+    public async Task CommentChangeToStatus(int id)
+    {
+        await commentService.CommentChangeToStatus(id);
+        await GetCommentList();
+        
+    }
+
+
+}

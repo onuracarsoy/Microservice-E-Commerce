@@ -1,0 +1,41 @@
+﻿@page "/AddCoupon"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject ICouponService categoryService
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kupon Oluştur</h4>
+        <EditForm Model="createCouponDto" FormName="AddCoupon" OnValidSubmit="CouponAdd">
+            <div class="form-group">
+                <label for="CouponCode">Kupon Kodu</label>
+                <InputText id="CouponCode"
+                           @bind-Value="createCouponDto.CouponCode"
+                           class="form-control" />
+
+                <label for="CouponRate">İndirim Miktarı</label>
+                <InputNumber id="CouponRate"
+                             @bind-Value="createCouponDto.CouponRate"
+                             class="form-control" />
+                <label for="CouponValidDate">İndirim Miktarı</label>
+                <InputDate id="CouponRate"
+                           @bind-Value="createCouponDto.CouponValidDate"
+                           class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a class="btn btn-danger" href="CouponList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateCouponDto createCouponDto { get; set; } = new CreateCouponDto();
+
+    public async Task CouponAdd()
+    {
+        await categoryService.CreateCouponAsync(createCouponDto);
+        NavigationManager.NavigateTo("/CouponList");
+
+    }
+
+}

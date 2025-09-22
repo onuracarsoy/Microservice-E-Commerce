@@ -1,0 +1,38 @@
+﻿@page "/AddCategory"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject ICategoryService categoryService
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kategori Oluştur</h4>
+        <EditForm Model="createCategoryDto" FormName="AddCategory" OnValidSubmit="CategoryAdd">
+            <div class="form-group">
+                <label for="CategoryImageUrl">Resmi</label>
+                <InputText id="CategoryImageUrl"
+                           @bind-Value="createCategoryDto.CategoryImageUrl"
+                           class="form-control" />
+                <label for="CategoryName">Kategori Adı</label>
+                <InputText id="CategoryName"
+                           @bind-Value="createCategoryDto.CategoryName"
+                           class="form-control">
+                </InputText>
+            </div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a class="btn btn-danger" href="CategoryList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateCategoryDto createCategoryDto { get; set; } = new CreateCategoryDto();
+
+    public async Task CategoryAdd()
+    {
+        await categoryService.CreateCategoryAsync(createCategoryDto);
+        NavigationManager.NavigateTo("/CategoryList");
+
+    }
+
+}

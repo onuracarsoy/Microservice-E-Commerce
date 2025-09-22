@@ -1,0 +1,125 @@
+﻿@page "/FeatureServiceList"
+@inject IFeautreServiceService featureServiceService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Hizmet İşlemleri</h4>
+        <a class="btn btn-primary" href="AddFeatureService">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>İkon</th>
+                        <th>Başlık</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultFeatureServiceDto is not null)
+                    {
+                        @foreach (var item in resultFeatureServiceDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.FeatureServiceID</th>
+                                <td> <i class="@item.FeatureServiceIcon" aria-hidden="true"></i></td>
+                                <td>@item.FeatureServiceTitle</td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.FeatureServiceID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteFeatureService(item.FeatureServiceID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <EditForm Model="updateFeatureServiceDto" OnValidSubmit="UpdateFeatureService">
+                                            <InputText @bind-Value="updateFeatureServiceDto.FeatureServiceID" hidden></InputText>
+                                            <div class="form-group">
+                                                <label for="FeatureServiceIcon">İkon</label>
+                                                <InputText id="FeatureServiceIcon" @bind-Value="updateFeatureServiceDto.FeatureServiceIcon" class="form-control" />
+                                                <label for="FeatureServiceTitle">Başlık</label>
+                                                <InputText id="FeatureServiceTitle" @bind-Value="updateFeatureServiceDto.FeatureServiceTitle" class="form-control" />
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultFeatureServiceDto>? resultFeatureServiceDto { get; set; }
+    private UpdateFeatureServiceDto? updateFeatureServiceDto { get; set; } = new UpdateFeatureServiceDto();
+
+
+    public async Task ToggleUpdateState(string featureServiceId)
+    {
+        foreach (var featureService in resultFeatureServiceDto)
+        {
+            featureService.IsActive = featureService.FeatureServiceID == featureServiceId ? !featureService.IsActive : false;
+        }
+
+        updateFeatureServiceDto = await featureServiceService.GetByIdFeatureServiceForUpdateAsync(featureServiceId);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetFeatureServiceList();
+    }
+
+    public async Task GetFeatureServiceList()
+    {
+
+        resultFeatureServiceDto = await featureServiceService.GetAllFeatureServiceAsync();
+
+    }
+
+    public async Task DeleteFeatureService(string id)
+    {
+        await featureServiceService.DeleteFeatureServiceAsync(id);
+        await GetFeatureServiceList();
+
+    }
+
+    public async Task UpdateFeatureService()
+    {
+        await featureServiceService.UpdateFeatureServiceAsync(updateFeatureServiceDto);
+        await GetFeatureServiceList();
+        
+    }
+
+    // public async Task FeatureServiceChangeToStatus(string id)
+    // {
+    //     var client = _httpClientFactory.CreateClient();
+    //     var jsonContent = new StringContent(JsonConvert.SerializeObject(updateFeatureServiceDto), Encoding.UTF8, "application/json");
+
+    //     var responseMessage = await client.PutAsync("https://localhost:7070/api/FeatureServices/" + id, jsonContent);
+
+    //     if (responseMessage.IsSuccessStatusCode)
+    //     {
+    //         await GetFeatureServiceList();
+    //     }
+    // }
+}

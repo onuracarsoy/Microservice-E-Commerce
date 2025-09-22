@@ -1,0 +1,33 @@
+﻿@page "/AddSpecialOffer"
+@inject ISpecialOfferService specialOfferService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Fırsat-Teklif Oluştur</h4>
+        <EditForm Model="createSpecialOfferDto" OnValidSubmit="SpecialOfferAdd">
+            <div class="form-group">
+                <label for="SpecialOfferName">Resim</label>
+                <InputText id="SpecialOfferImageUrl" @bind-Value="createSpecialOfferDto.SpecialOfferImageUrl" class="form-control" />
+                <label for="SpecialOfferTitle">Başlık</label>
+                <InputText id="SpecialOfferTitle" @bind-Value="createSpecialOfferDto.SpecialOfferTitle" class="form-control" />
+                <label for="SpecialOfferSubTitle">Alt Başlık</label>
+                <InputText id="SpecialOfferSubTitle" @bind-Value="createSpecialOfferDto.SpecialOfferSubTitle" class="form-control" />
+            </div>
+            <button class="btn btn-success" type="submit">Kaydet</button>
+            <a class="btn btn-danger" href="SpecialOfferList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    private CreateSpecialOfferDto createSpecialOfferDto { get; set; } = new CreateSpecialOfferDto();
+
+    public async Task SpecialOfferAdd()
+    {
+        await specialOfferService.CreateSpecialOfferAsync(createSpecialOfferDto);
+        NavigationManager.NavigateTo("/SpecialOfferList");
+
+    }
+
+}

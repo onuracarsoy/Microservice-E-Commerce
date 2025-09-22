@@ -1,0 +1,70 @@
+﻿@inherits LayoutComponentBase
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<body class="sidebar-mini">
+    <div class="wrapper">
+
+        <!-- Main Header -->
+        <header class="main-header" style="background-color:#FFD333;">
+            <!-- Logo -->
+            <!-- Header Navbar -->
+      @*       <NavMenu /> *@
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar horizontal dark-bg" style="min-height: 0%;">
+            <section class="sidebar">
+                <!-- Sidebar Menu -->
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li>
+                        <a href="CategoryList"><i class="fa fa-list"></i> <span>Kategori İşlemleri</span></a>
+                    </li>
+                    <li>
+                        <a href="ProductList"><i class="fa fa-cubes"></i> <span>Ürün İşlemleri</span></a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-bullseye"></i> <span>Site İşlemleri</span></a>
+                        <ul class="treeview-menu">
+                            <li><a href="FeatureSliderList"><i class="fa fa-angle-right"></i>Slider İşlemleri</a></li>
+                            <li><a href="SpecialOfferList"><i class="fa fa-angle-right"></i>Fırsat-Teklif İşlemleri</a></li>
+                            <li><a href="FeatureServiceList"><i class="fa fa-angle-right"></i>Hizmet İşlemleri</a></li>
+                        </ul>
+                    </li>
+                    <li> <a href="CouponList"> <i class="fa fa-ticket"></i> <span>Kupon İşlemleri</span></a> </li>
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-cube"></i> <span>Sipariş İşlemleri</span></a>
+                        <ul class="treeview-menu">
+                            <li><a href="NotShippedOrderList"><i class="fa fa-angle-right"></i>Kargoya Verilmemiş </a></li>
+                            <li><a href="ShippedOrderList"><i class="fa fa-angle-right"></i>Kargoya Verilmiş </a></li>
+                        </ul>
+                    </li>
+                    <li> <a href="CargoCompanyList"> <i class="fa fa-truck"></i> <span>Kargo İşlemleri</span></a> </li>
+                    <li> <a href="ContactList"> <i class="fa fa-phone"></i> <span>İletişim İşlemleri</span></a> </li>
+                    <li> <a href="UserList"> <i class="fa fa-users"></i> <span>Kullanıcı İşlemleri</span></a> </li>
+          
+                </ul>
+                <!-- sidebar-menu -->
+            </section>
+
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper full-wide">
+            <!-- Main content -->
+            <section class="content container-fluid">
+                @Body
+            </section>
+            <!-- content -->
+        </div>
+        <!-- content-wrapper -->
+        <!-- Main Footer -->
+        <footer class="main-footer full-wide dark-bg">
+            <div class="pull-right hidden-xs"> Version 1.0</div>
+            Copyright &copy; @DateTime.Now.Year FastShop. All rights reserved.
+        </footer>
+    </div>
+    <!-- wrapper -->
+</body>
+</html>

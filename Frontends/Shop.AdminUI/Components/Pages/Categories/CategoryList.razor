@@ -1,0 +1,118 @@
+﻿@page "/CategoryList"
+@inject ICategoryService categoryService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kategori İşlemleri</h4>
+        <a class="btn btn-primary" href="AddCategory">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Resmi</th>
+                        <th>Kategori Adı</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultCategoryDto is not null)
+                    {
+                        @foreach (var item in resultCategoryDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.CategoryID</th>
+                                <td><img src="@item.CategoryImageUrl" style="height:50px; width:50px;" /></td>
+                                <td>@item.CategoryName</td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.CategoryID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteCategory(item.CategoryID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <EditForm Model="updateCategoryDto" OnValidSubmit="UpdateCategory">
+                                            <InputText @bind-Value="updateCategoryDto.CategoryID" hidden></InputText>
+                                            <div class="form-group">
+                                                <label for="CategoryImageUrl">Resmi</label>
+                                                <InputText id="CategoryImageUrl"
+                                                           @bind-Value="updateCategoryDto.CategoryImageUrl"
+                                                           class="form-control" />
+                                         
+                                                <label for="CategoryName">Kategori Adı</label>
+                                                <InputText id="CategoryName"
+                                                           @bind-Value="updateCategoryDto.CategoryName"
+                                                           class="form-control" />
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+                              
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultCategoryDto>? resultCategoryDto { get; set; }
+    private UpdateCategoryDto? updateCategoryDto { get; set; } = new UpdateCategoryDto();
+
+
+    public async Task ToggleUpdateState(string categoryId)
+    {
+        foreach (var category in resultCategoryDto)
+        {
+            category.IsActive = category.CategoryID == categoryId ? !category.IsActive : false;
+        }
+
+       updateCategoryDto =  await categoryService.GetByIdCategoryForUpdateAsync(categoryId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategoryList();
+    }
+
+    public async Task GetCategoryList()
+    {
+        resultCategoryDto = await categoryService.GetAllCategoryAsync();
+
+    }
+
+    public async Task DeleteCategory(string id)
+    {
+        await categoryService.DeleteCategoryAsync(id);
+       
+        await GetCategoryList();
+        
+    }
+
+    public async Task UpdateCategory()
+    {
+        await categoryService.UpdateCategoryAsync(updateCategoryDto);
+        await GetCategoryList();
+        
+    }
+
+
+}

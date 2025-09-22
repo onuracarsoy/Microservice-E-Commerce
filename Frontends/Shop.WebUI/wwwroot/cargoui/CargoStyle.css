@@ -1,0 +1,74 @@
+﻿.step {
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #f0f0f0; /* Initial grey color */
+    border-radius: 50%;
+    color: #6c757d; /* Grey color for text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto;
+    border: 3px solid #6c757d; /* Border for uncompleted step */
+    transition: all 0.3s ease;
+}
+
+.step.active .step-icon {
+    background-color: #FFD22F; /* Blue when active */
+    color: #fff;
+    border-color: #FFD22F; /* Blue border when active */
+}
+
+.step.completed .step-icon {
+    background-color: #FFD22F; /* Green when completed */
+    color: #fff;
+    border-color: #FFD22F; /* Green border when completed */
+}
+
+.step-title {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.step-line {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: #6c757d;
+    z-index: -1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+    .step-line.active {
+        background-color: #FFD22F; /* Blue line between active steps */
+    }
+
+    .step-line.completed {
+        background-color: #FFD22F; /* Green line between completed steps */
+    }
+
+/* Progress bar styles */
+.progress-bar-container {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+.progress-bar-inner {
+    height: 100%;
+    border-radius: 5px;
+    background-color: #FFD22F; /* Green by default */
+    transition: width 0.3s ease;
+}

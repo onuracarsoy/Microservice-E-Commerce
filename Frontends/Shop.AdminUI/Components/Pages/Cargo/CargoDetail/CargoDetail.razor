@@ -1,0 +1,108 @@
+﻿@page "/CargoDetail/{ID:int}"
+@inject NavigationManager NavigationManager
+@inject ICargoCompanyService cargoCompanyService
+@inject ICargoDetailService cargoDetailService
+@inject ICargoCustomerService cargoCustomerService
+@inject ICargoOperationService cargoOperaitonService
+@inject IOrderingService orderingService
+@inject IUserService userService
+@inject IAddressService addressService
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kargo Firması Seç ve Bilgileri Aktar </h4>
+        <EditForm Model="createCargoDetailDto" FormName="AddCargoDetail" OnValidSubmit="CargoDetailAdd">
+            <div class="form-group">
+                <label for="CargoCompanyID">Kargo Firması</label>
+                <select @bind="createCargoDetailDto.CargoCompanyID" class="form-control">
+                    <option value="" disabled selected>Kargo Firması Seçiniz</option>
+                    @foreach (var item in resultCargoCompanyDto)
+                    {
+
+                        <option value="@item.CargoCompanyID">@item.CargoCompanyName</option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a class="btn btn-danger" href="CategoryList">İptal</a>
+        </EditForm>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int ID { get; set; }
+
+    private CreateCargoDetailDto createCargoDetailDto { get; set; } = new CreateCargoDetailDto();
+    private List<ResultCargoCompanyDto> resultCargoCompanyDto { get; set; } = new List<ResultCargoCompanyDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCargoCompanyList();
+    }
+
+    public async Task GetCargoCompanyList()
+    {
+        resultCargoCompanyDto = await cargoCompanyService.GetAllCargoCompanyAsync();
+    }
+    public async Task CargoDetailAdd()
+    {
+        var order = await orderingService.GetByIdOrderingAsync(ID);
+        var user = await userService.GetByUserIdWithUserInfo(order.UserID);
+        var address = await addressService.GetByIdAddressAsync(order.AddressID);
+
+        var createCargoCustomerDto = new CreateCargoCustomerDto()
+            {
+                CargoCustomerName = address.Name,
+                CargoCustomerSurname = address.Surname,
+                CargoCustomerEmail = address.Email,
+                CargoCustomerPhone = address.Phone,
+                CargoCustomerCity = address.AddressCity,
+                CargoCustomerDistrict = address.AddressDistrict,
+                CargoCustomerAddress = address.AddressDetail,
+            };
+        var cargoCustomerId = await cargoCustomerService.CreateCargoCustomerAsync(createCargoCustomerDto);
+        var cargoCustomer = await cargoCustomerService.GetByIdCargoCustomerAsync(cargoCustomerId);
+
+        var rand= new Random();
+        var operationBarcode = rand.Next(1000000, 99999999);
+
+        var createCargoOperationDto = new CreateCargoOperationDto()
+            {
+                CargoOperationBarcode = operationBarcode.ToString(),
+                CargoOperationDate = DateTime.Now,
+                CargoStepOne = true,
+                CargoStepTwo = false,
+                CargoStepThree = false,
+                CargoStepFour = false,
+                CargoStepFive = false,
+                CargoOperationDescription = ""
+            };
+        var cargoOperationId = await cargoOperaitonService.CreateCargoOperationAsync(createCargoOperationDto);
+
+        createCargoDetailDto.CargoDetailSenderCustomer = "Shop-Fast";
+        createCargoDetailDto.CargoDetailReceiverCustomer = cargoCustomer.CargoCustomerName + " " + cargoCustomer.CargoCustomerSurname;
+        createCargoDetailDto.OrderingID = order.OrderingID;
+        createCargoDetailDto.CargoCustomerID = cargoCustomerId;
+        createCargoDetailDto.CargoOperationID = cargoOperationId;
+
+        var cargoDetailId = await cargoDetailService.CreateCargoDetailAsync(createCargoDetailDto);
+
+        var cargoWithOrder = new UpdateOrderingDto()
+            {
+                OrderingID = order.OrderingID,
+                OrderDate = order.OrderDate,
+                AddressID = order.AddressID,
+                UserID = order.UserID,
+                OrderTotalPrice = order.OrderTotalPrice,
+                CargoDetailID = cargoDetailId
+            };
+        await orderingService.UpdateOrderingAsync(cargoWithOrder);
+
+        NavigationManager.NavigateTo("/ShippedOrderList");
+
+    }
+
+}

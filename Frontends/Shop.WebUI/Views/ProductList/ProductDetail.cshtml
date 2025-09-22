@@ -1,0 +1,88 @@
+﻿@model CreateCommentDto
+@{
+    ViewData["Title"] = "ProductDetail";
+    Layout = "~/Views/UILayout/_UILayout.cshtml";
+    bool isAuthenticated = User.Identity.IsAuthenticated;
+}
+<div class="container-fluid pb-5">
+    <div class="row px-xl-5">
+        @await Component.InvokeAsync("_ProductDetailImageSliderComponentPartial", new { ProductID = ViewBag.ProductID })
+
+        @await Component.InvokeAsync("_ProductDetailFeatureInfoComponentPartial", new { ProductID = ViewBag.ProductID })
+
+    </div>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="bg-light p-30">
+                <div class="nav nav-tabs mb-4">
+                    <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Detaylar</a>
+                    <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Bilgiler</a>
+                    <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Yorumlar</a>
+                </div>
+                <div class="tab-content">
+                    @await Component.InvokeAsync("_ProductDetailDescriptionComponentPartial", new { ProductID = ViewBag.ProductID })
+                    @await Component.InvokeAsync("_ProductDetailInformationComponentPartial", new { ProductID = ViewBag.ProductID })
+                    <div class="tab-pane fade" id="tab-pane-3">
+                        <div class="row">
+                            @await Component.InvokeAsync("_ProductDetailCommentComponentPartial", new { ProductID = ViewBag.ProductID })
+                            @if (isAuthenticated){
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">Ürünü Değerlendir</h4>
+                                    <div class="d-flex my-3">
+                                        <p class="mb-0 mr-2">Puan * :</p>
+                                        <div class="text-primary" id="ratingStars">
+                                            <i class="far fa-star" data-value="1"></i>
+                                            <i class="far fa-star" data-value="2"></i>
+                                            <i class="far fa-star" data-value="3"></i>
+                                            <i class="far fa-star" data-value="4"></i>
+                                            <i class="far fa-star" data-value="5"></i>
+                                        </div>
+                                    </div>
+
+                                    <form asp-controller="ProductList" asp-action="PostComment" method="post">
+                                        <input type="hidden" asp-for="ProductID" value="@ViewBag.ProductID" class="form-control" id="name">
+                                        <input type="hidden" asp-for="CommentRate" id="ratingValue" value="0">
+                                        <div class="form-group">
+                                            <label asp-for="CommentDetail">Değerlendirmeniz *</label>
+                                            <textarea asp-for="CommentDetail" cols="30" rows="5" class="form-control"></textarea>
+
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <input type="submit" value="Değerlendir" class="btn btn-primary px-3">
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll("#ratingStars .fa-star");
+
+        stars.forEach(star => {
+            star.addEventListener("click", function () {
+                const value = parseInt(this.getAttribute("data-value"));
+                document.getElementById("ratingValue").value = value;
+
+                stars.forEach((x, index) => {
+                    if (index < value) {
+                        x.classList.remove("far");
+                        x.classList.add("fas");
+                    } else {
+                        x.classList.remove("fas");
+                        x.classList.add("far");
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+

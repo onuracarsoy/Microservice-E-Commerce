@@ -1,0 +1,28 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+@await Component.InvokeAsync("_HeadUILayoutComponentPartial")
+
+<body>
+    <!-- Topbar Start -->
+    @await Component.InvokeAsync("_TopbarUILayoutComponentPartial")
+    <!-- Topbar End -->
+    <!-- Navbar Start -->
+    @await Component.InvokeAsync("_NavbarUILayoutComponentPartial")
+
+    <!-- Navbar End -->
+    <!-- Content Start -->
+    @RenderBody()
+    <!-- Content End -->
+    <!-- Footer Start -->
+    @await Component.InvokeAsync("_FooterUILayoutComponentPartial")
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- Scripts Start -->
+    @await Component.InvokeAsync("_ScriptUILayoutComponentPartial")
+    <!-- Scripts End -->
+</body>
+
+</html>

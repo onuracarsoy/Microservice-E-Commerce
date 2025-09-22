@@ -1,0 +1,127 @@
+﻿@page "/SpecialOfferList"
+@rendermode InteractiveServer
+@inject ISpecialOfferService specialOfferService
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Fırsat-Teklif İşlemleri</h4>
+        <a class="btn btn-primary" href="AddSpecialOffer">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Resim</th>
+                        <th>Başlık</th>
+                        <th>Alt Başlık</th>
+                        <th>Durum</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultSpecialOfferDto is not null)
+                    {
+                        @foreach (var item in resultSpecialOfferDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.SpecialOfferID</th>
+                                <td><img src="@item.SpecialOfferImageUrl" style="height:50px; width:50px;" /></td>
+                                <td>@item.SpecialOfferTitle</td>
+                                <td>@item.SpecialOfferSubTitle</td>
+                                <td><button class="@(item.SpecialOfferStatus == true ? "btn btn-success" : "btn btn-danger" )" @onclick="() => SpecialOfferChangeToStatus(item.SpecialOfferID)">@(item.SpecialOfferStatus == true ? "Aktif" : "Pasif")</button></td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.SpecialOfferID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteSpecialOffer(item.SpecialOfferID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <EditForm Model="updateSpecialOfferDto" OnValidSubmit="UpdateSpecialOffer">
+                                            <InputText @bind-Value="updateSpecialOfferDto.SpecialOfferID" hidden></InputText>
+                                            <div class="form-group">
+                                                <label for="SpecialOfferName">Resim</label>
+                                                <InputText id="SpecialOfferImageUrl" @bind-Value="updateSpecialOfferDto.SpecialOfferImageUrl" class="form-control" />
+                                                <label for="SpecialOfferTitle">Başlık</label>
+                                                <InputText id="SpecialOfferTitle" @bind-Value="updateSpecialOfferDto.SpecialOfferTitle" class="form-control" />
+                                                <label for="SpecialOfferSubTitle">Alt Başlık</label>
+                                                <InputText id="SpecialOfferSubTitle" @bind-Value="updateSpecialOfferDto.SpecialOfferSubTitle" class="form-control" />
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultSpecialOfferDto>? resultSpecialOfferDto { get; set; }
+    private UpdateSpecialOfferDto? updateSpecialOfferDto { get; set; } = new UpdateSpecialOfferDto();
+
+
+    public async Task ToggleUpdateState(string specialOfferId)
+    {
+        foreach (var specialOffer in resultSpecialOfferDto)
+        {
+            specialOffer.IsActive = specialOffer.SpecialOfferID == specialOfferId ? !specialOffer.IsActive : false;
+        }
+
+        updateSpecialOfferDto = await specialOfferService.GetByIdSpecialOfferForUpdateAsync(specialOfferId);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetSpecialOfferList();
+    }
+
+    public async Task GetSpecialOfferList()
+    {
+
+        resultSpecialOfferDto = await specialOfferService.GetAllSpecialOfferAsync();
+
+    }
+
+    public async Task DeleteSpecialOffer(string id)
+    {
+
+        await specialOfferService.DeleteSpecialOfferAsync(id);
+        await GetSpecialOfferList();
+
+    }
+
+    public async Task UpdateSpecialOffer()
+    {
+
+        await specialOfferService.UpdateSpecialOfferAsync(updateSpecialOfferDto);
+        await GetSpecialOfferList();
+
+    }
+
+    public async Task SpecialOfferChangeToStatus(string id)
+    {
+        await specialOfferService.SpecialOfferChangeToStatusAsync(id);
+        await GetSpecialOfferList();
+      
+    }
+}

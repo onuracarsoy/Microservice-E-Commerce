@@ -1,0 +1,144 @@
+﻿@page "/ProductList"
+@rendermode InteractiveServer
+@inject IProductService productService
+@inject ICategoryService categoryService
+@attribute [Authorize]
+
+<div class="col-md-12">
+    <div class="chart-box">
+
+        <h4>Ürün İşlemleri</h4>
+        <a class="btn btn-primary" href="AddProduct">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ürün Resmi</th>
+                        <th>Ürün Adı</th>
+                        <th>Kategori</th>
+                        <th>Açıklaması</th>
+                        <th>Fiyatı</th>
+                        <th>Görsel</th>
+                        <th>Detay</th>
+                        <th>Yorum</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultProductWithCategoryDto is not null)
+                    {
+                        @foreach (var item in resultProductWithCategoryDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.ProductID</th>
+                                <td><img src="@item.ProductImageUrl" style="height:50px; width:50px;" /></td>
+                                <td>@item.ProductName</td>
+                                <td>@item.CategoryName</td>
+                                <td>@item.ProductDescription</td>
+                                <td>@item.ProductPrice ₺</td>
+                                <td><a class="btn btn-primary" href="ProductImages/@item.ProductID" ><i class="fa fa-file-image-o" aria-hidden="true"></i></a></td>
+                                <td><a class="btn btn-primary" href="ProductDetails/@item.ProductID"><i class="fa fa-info-circle" aria-hidden="true"></i></a></td>
+                                <td><a class="btn btn-primary" href="ProductComments/@item.ProductID"><i class="fa fa-comments" aria-hidden="true"></i></a></td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.ProductID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteProduct(item.ProductID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="4">
+                                        <EditForm Model="updateProductDto" OnValidSubmit="UpdateProduct">
+                                            <InputText @bind-Value="updateProductDto.ProductID" hidden></InputText>
+                                            <div class="form-group">
+                                                <label for="ProductName">Ürün Adı</label>
+                                                <InputText id="ProductName" @bind-Value="updateProductDto.ProductName" class="form-control" />
+                                                <label for="ProductName">Kategori</label>
+                                                <select @bind="updateProductDto.CategoryID" class="form-control">
+                                                    @foreach (var item in resultCategoryDto)
+                                                    {
+                                                        <option value="@item.CategoryID" selected="@(updateProductDto.CategoryID == item.CategoryID)">@item.CategoryName</option>
+                                                    }
+                                                </select>
+                                                <label for="ProductName">Ürün Resmi</label>
+                                                <InputText id="ProductImageUrl" @bind-Value="updateProductDto.ProductImageUrl" class="form-control" />
+                                                <label for="ProductName">Fiyatı</label>
+                                                <InputNumber id="ProductPrice" @bind-Value="updateProductDto.ProductPrice" class="form-control" />
+                                                <label for="ProductName">Açıklaması</label>
+                                                <InputTextArea id="ProductDescription" @bind-Value="updateProductDto.ProductDescription" class="form-control" />
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor...</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    private List<ResultProductWithCategoryDto>? resultProductWithCategoryDto { get; set; }
+    private List<ResultCategoryDto>? resultCategoryDto { get; set; }
+    private UpdateProductDto? updateProductDto { get; set; } = new UpdateProductDto();
+
+    public async Task ToggleUpdateState(string productId)
+    {
+        foreach (var product in resultProductWithCategoryDto)
+        {
+            product.IsActive = product.ProductID == productId ? !product.IsActive : false;
+        }
+        updateProductDto =  await productService.GetByIdProductForUpdateAsync(productId);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProductList();
+        await GetCategoryList();
+    }
+
+    public async Task GetProductList()
+    {
+
+        resultProductWithCategoryDto =  await productService.GetAllProductWithCategoryAsync();
+
+
+    }
+
+    public async Task GetCategoryList()
+    {
+        resultCategoryDto = await categoryService.GetAllCategoryAsync();
+    }
+
+    public async Task DeleteProduct(string id)
+    {
+        await productService.DeleteProductAsync(id);
+        await OnInitializedAsync();
+    }
+
+    public async Task UpdateProduct()
+    {
+        await productService.UpdateProductAsync(updateProductDto);
+        await OnInitializedAsync();
+    }
+}

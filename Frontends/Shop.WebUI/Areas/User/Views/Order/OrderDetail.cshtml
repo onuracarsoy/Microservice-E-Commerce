@@ -1,0 +1,52 @@
+﻿
+@model List<GetByOrderingIdOrderingDetailDto>
+@{
+    ViewData["Title"] = "OrderDetail";
+    Layout = "~/Views/UILayout/_UILayout.cshtml";
+    int productCount = 0;
+    decimal orderTotalPrice = 0;
+}
+
+<div class="container">
+    <div class="col-lg-16 table-responsive mb-5">
+        <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Sipariş Detayı</span></h5>
+
+        <table class="table table-light table-borderless table-hover text-center mb-0">
+            <tbody class="align-middle">
+
+                @foreach (var item in Model)
+                {
+                    productCount++;
+                    orderTotalPrice += item.ProductTotalPrice;
+                    <tr>
+
+                        <th class="align-middle"> @productCount</th>
+                        <td class="align-middle"> @item.ProductName</td>
+                        <td class="align-middle"> @item.ProductAmount x @item.ProductPrice ₺</td>
+                        <td class="align-middle"> @item.ProductTotalPrice ₺ </td>
+
+                    </tr>
+                 
+                }
+                <tr>
+
+                    <th class="align-middle"> Özet :</th>
+                    <td class="align-middle"> </td>
+                    <td class="align-middle"> </td>
+                    <th class="align-middle"> @if (orderTotalPrice != ViewBag.OrderTotalPrice)
+                        {
+                            <p class="text-danger"> İndirim :<del>@(orderTotalPrice - ViewBag.OrderTotalPrice) ₺</del></p>
+
+                        }
+                        
+                        Toplam : @ViewBag.OrderTotalPrice ₺ </th>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+

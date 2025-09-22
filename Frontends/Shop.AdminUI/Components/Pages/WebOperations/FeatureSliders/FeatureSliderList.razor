@@ -1,0 +1,130 @@
+﻿@page "/FeatureSliderList"
+@inject IFeatureSliderService featureSliderService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Slider İşlemleri</h4>
+        <a class="btn btn-primary" href="AddFeatureSlider">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Resim</th>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th>Durum</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultFeatureSliderDto is not null)
+                    {
+                        @foreach (var item in resultFeatureSliderDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.FeatureSliderID</th>
+                                <td><img src="@item.FeatureSliderImageUrl" style="height:50px; width:50px;" /></td>
+                                <td>@item.FeatureSliderTitle</td>
+                                <td>@item.FeatureSliderDescription</td>
+                                <td><button class="@(item.FeatureSliderStatus == true ? "btn btn-success" : "btn btn-danger" )" @onclick="() => FeatureSliderChangeToStatus(item.FeatureSliderID)">@(item.FeatureSliderStatus == true ? "Aktif" : "Pasif")</button></td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.FeatureSliderID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteFeatureSlider(item.FeatureSliderID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <EditForm Model="updateFeatureSliderDto" OnValidSubmit="UpdateFeatureSlider">
+                                            <InputText @bind-Value="updateFeatureSliderDto.FeatureSliderID" hidden></InputText>
+                                            <div class="form-group">
+                                                <label for="FeatureSliderName">Resim</label>
+                                                <InputText id="FeatureSliderImageUrl" @bind-Value="updateFeatureSliderDto.FeatureSliderImageUrl" class="form-control" />
+                                                <label for="FeatureSliderTitle">Başlık</label>
+                                                <InputText id="FeatureSliderTitle" @bind-Value="updateFeatureSliderDto.FeatureSliderTitle" class="form-control" />
+                                                <label for="FeatureSliderDescription">Açıklama</label>
+                                                <InputTextArea id="FeatureSliderDescription" @bind-Value="updateFeatureSliderDto.FeatureSliderDescription" class="form-control" />
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultFeatureSliderDto>? resultFeatureSliderDto { get; set; }
+    private UpdateFeatureSliderDto? updateFeatureSliderDto { get; set; } = new UpdateFeatureSliderDto();
+
+
+    public async Task ToggleUpdateState(string featureSliderId)
+    {
+        foreach (var featureSlider in resultFeatureSliderDto)
+        {
+            featureSlider.IsActive = featureSlider.FeatureSliderID == featureSliderId ? !featureSlider.IsActive : false;
+        }
+
+
+        updateFeatureSliderDto =  await featureSliderService.GetByIdFeatureSliderForUpdateAsync(featureSliderId);
+
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetFeatureSliderList();
+    }
+
+    public async Task GetFeatureSliderList()
+    {
+
+        resultFeatureSliderDto = await featureSliderService.GetAllFeatureSliderAsync();
+
+
+    }
+
+    public async Task DeleteFeatureSlider(string id)
+    {
+
+        await featureSliderService.DeleteFeatureSliderAsync(id);
+        await GetFeatureSliderList();
+
+    }
+
+    public async Task UpdateFeatureSlider()
+    {
+
+        await featureSliderService.UpdateFeatureSliderAsync(updateFeatureSliderDto);
+        await GetFeatureSliderList();
+
+    }
+
+    public async Task FeatureSliderChangeToStatus(string id)
+    {
+        await featureSliderService.FeatureSliderChangeToStatusAsync(id);
+        await GetFeatureSliderList();
+        
+    }
+}

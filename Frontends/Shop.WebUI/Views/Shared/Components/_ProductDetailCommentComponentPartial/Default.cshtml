@@ -1,0 +1,56 @@
+﻿@model List<ResultCommentDto>
+@{
+
+
+
+    string NameHasher(string nameSurname)
+    {
+        string[] fullName = nameSurname.Split(' ');
+        string name = fullName[0];
+        // string surname = fullName[1];
+
+        string hashedName = name[0] + new string('*', name.Length - 1);
+
+
+        // string? hashedSurname = surname[0] + new string('*', surname.Length - 1);
+
+        return $"{hashedName} ";
+    }
+}
+<div class="col-md-6">
+    <h4 class="mb-4">Toplam @Model.Count Değerlendirme</h4>
+    @if (Model is not null)
+    {
+        @foreach (var item in Model)
+        {
+            if (item.CommentStatus)
+            {
+               
+                <div class="media mb-4">
+                    <div class="media-body">
+                        <h6>@NameHasher(item.CommentNameSurname)<small> - <i>@item.CommentCreateDate.Date.ToShortDateString()</i></small></h6>
+                        <div class="text-primary mb-2">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                if (i < item.CommentRate)
+                                {
+                                    <i class="fas fa-star"></i>
+                                }
+                                else
+                                {
+
+                                    <i class="far fa-star"></i>
+
+                                }
+                            }
+                        </div>
+                        <p>@item.CommentDetail</p>
+                    </div>
+                </div>
+            }
+
+        }
+    }
+
+
+</div>

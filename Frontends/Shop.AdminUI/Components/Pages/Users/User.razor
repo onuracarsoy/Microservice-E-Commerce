@@ -1,0 +1,40 @@
+﻿@page "/User"
+@using Microsoft.AspNetCore.Authorization
+@using Shop.ServiceDistribute.Services.Abstract
+@inject IUserService _userService
+@attribute [Authorize]
+
+<table>
+    <tr>
+        <th>#</th>
+        <th>Ad</th>
+        <th>Soyad</th>
+        <th>Mail</th>
+    </tr>
+
+    <tr>
+        <td>@userModel.ID</td>
+        <td>@userModel.Name</td>
+        <td>@userModel.Surname</td>
+        <td>@userModel.Email</td>
+    </tr>
+</table>
+
+
+
+
+
+@code {
+    public UserDetailViewModel? userModel { get; set; } = new UserDetailViewModel();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUser();
+    }
+
+    public async Task GetUser()
+    {
+         userModel = await _userService.GetUserInfo();
+    }
+}

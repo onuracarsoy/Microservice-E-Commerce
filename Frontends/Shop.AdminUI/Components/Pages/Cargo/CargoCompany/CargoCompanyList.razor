@@ -1,0 +1,113 @@
+﻿@page "/CargoCompanyList"
+@inject ICargoCompanyService cargoCompanyService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kargo Şirketi İşlemleri</h4>
+        <a class="btn btn-primary" href="AddCargoCompany">Yeni Oluştur</a>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kargo Şirketi Adı</th>
+                        <th>Düzenle</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultCargoCompanyDto is not null)
+                    {
+                        @foreach (var item in resultCargoCompanyDto)
+                        {
+                            <tr>
+                                <th scope="row">@item.CargoCompanyID</th>
+                                <td>@item.CargoCompanyName</td>
+                                <td>
+                                    <button class="btn btn-warning" @onclick="() => ToggleUpdateState(item.CargoCompanyID)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" @onclick="async () => { await DeleteCargoCompany(item.CargoCompanyID); }">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @if (item.IsActive)
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <EditForm Model="updateCargoCompanyDto" OnValidSubmit="UpdateCargoCompany">
+                                            <InputNumber @bind-Value="updateCargoCompanyDto.CargoCompanyID" hidden></InputNumber>
+                                            <div class="form-group">
+                                                <label for="CargoCompanyName">Resmi</label>
+                                                <InputText id="CargoCompanyName"
+                                                           @bind-Value="updateCargoCompanyDto.CargoCompanyName"
+                                                           class="form-control" />
+
+                                             
+                                            </div>
+                                            <button class="btn btn-success" type="submit">Kaydet</button>
+                                        </EditForm>
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultCargoCompanyDto>? resultCargoCompanyDto { get; set; }
+    private UpdateCargoCompanyDto? updateCargoCompanyDto { get; set; } = new UpdateCargoCompanyDto();
+
+
+    public async Task ToggleUpdateState(int cargoCompanyId)
+    {
+        foreach (var cargoCompany in resultCargoCompanyDto)
+        {
+            cargoCompany.IsActive = cargoCompany.CargoCompanyID == cargoCompanyId ? !cargoCompany.IsActive : false;
+        }
+
+        updateCargoCompanyDto = await cargoCompanyService.GetByIdCargoCompanyForUpdateAsync(cargoCompanyId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCargoCompanyList();
+    }
+
+    public async Task GetCargoCompanyList()
+    {
+        resultCargoCompanyDto = await cargoCompanyService.GetAllCargoCompanyAsync();
+
+    }
+
+    public async Task DeleteCargoCompany(int id)
+    {
+        await cargoCompanyService.DeleteCargoCompanyAsync(id);
+
+        await GetCargoCompanyList();
+
+    }
+
+    public async Task UpdateCargoCompany()
+    {
+        await cargoCompanyService.UpdateCargoCompanyAsync(updateCargoCompanyDto);
+        await GetCargoCompanyList();
+
+    }
+
+
+}

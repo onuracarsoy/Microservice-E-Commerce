@@ -1,0 +1,142 @@
+﻿@page "/ShippedOrderlist"
+@inject IUserService userService
+@inject IOrderingService orderingService
+@inject IOrderingDetailService orderingDetailService
+@rendermode InteractiveServer
+@attribute [Authorize]
+<div class="col-md-12">
+    <div class="chart-box">
+        <h4>Kargoya Verilmiş Sipariş İşlemleri</h4>
+        <div class="bs-example" data-example-id="hoverable-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th># Sipariş Kodu</th>
+                        <th>Sipariş Tarihi</th>
+                        <th>Sipariş Ayrıntıları</th>
+                        <th>Kargo Detayları</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (resultOrderingDto is not null)
+                    {
+                        
+                        @foreach (var item in resultOrderingDto)
+                        {
+                            @if(item.CargoDetailID is not null){
+                                <tr>
+                                    <th scope="row">@item.OrderingID</th>
+                                    <td>@item.OrderDate</td>
+
+                                    <td>
+                                        <button class="btn btn-primary" @onclick="() => ToggleOrderInfowithCustomerInfoState(item.OrderingID, item.UserID)">
+                                            <i class="fa fa-info" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary" href="CargoDetail/@item.OrderingID">
+                                            <i class="fa fa-truck" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="async () => { await DeleteOrdering(item.OrderingID); }">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                         
+
+                            @if (item.IsActive)
+                            {
+                                @if (getByOrderingIdOrderingDetailDto is not null && userDetailViewModel is not null)
+                                {
+                                    <tr>
+                                        <th colspan="2">İsim Soyisim </th>
+                                        <th>Mail </th>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2">@userDetailViewModel.Name @userDetailViewModel.Surname </td>
+                                        <td>@userDetailViewModel.Email </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">Ürün </th>
+                                        <th>Miktar x Adet Fiyatı </th>
+                                        <th>Ara Toplam</th>
+                                    </tr>
+                                    @foreach (var detail in getByOrderingIdOrderingDetailDto)
+                                    {
+                                        <tr>
+                                            <td colspan="2">@detail.ProductName </td>
+                                            <td>@detail.ProductAmount x @detail.ProductPrice ₺ </td>
+                                            <td>@detail.ProductTotalPrice ₺ </td>
+                                        </tr>
+
+
+                                    }
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <th> Toplam : @item.OrderTotalPrice ₺ </th>
+                                    </tr>
+
+                                }
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p>Veriler Yükleniyor....</p>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<ResultOrderingDto>? resultOrderingDto { get; set; }
+    private List<GetByOrderingIdOrderingDetailDto>? getByOrderingIdOrderingDetailDto { get; set; }
+    private UserDetailViewModel userDetailViewModel { get; set; }
+
+
+    public async Task ToggleOrderInfowithCustomerInfoState(int orderingId, string userId)
+    {
+        foreach (var ordering in resultOrderingDto)
+        {
+            ordering.IsActive = ordering.OrderingID == orderingId ? !ordering.IsActive : false;
+        }
+
+        getByOrderingIdOrderingDetailDto = await orderingDetailService.GetByOrderingIdOrderListAsync(orderingId);
+        userDetailViewModel = await userService.GetByUserIdWithUserInfo(userId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrderingList();
+    }
+
+    public async Task GetOrderingList()
+    {
+        resultOrderingDto = await orderingService.GetAllOrderingAsync();
+
+    }
+
+    public async Task DeleteOrdering(int id)
+    {
+        await orderingService.DeleteOrderingAsync(id);
+
+        await GetOrderingList();
+
+    }
+
+
+
+
+}
+
