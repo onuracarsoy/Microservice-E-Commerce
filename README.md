@@ -1,49 +1,51 @@
 📌 Proje Özeti (TR)
 
 Microservice-E-Commerce, mikroservis mimarisi kullanılarak geliştirilmiş tam özellikli bir e-ticaret platformudur. .Net Ekosistem bilgilerimin tümünü kullanmaya çalıştığım birnevi benim için final projemdir. Admin kısmını özellikle blazor ile entegre ederek geliştirmek istedim. O yüzden benim için farklı ve özel projedir.
-ApiGateway/
 
-Amaç: API Gateway olarak görev yapar, yani istemciden gelen istekleri ilgili mikroservislere yönlendirir.
+1. ApiGateway/
 
-Teknolojiler: Genellikle Ocelot gibi bir API Gateway kütüphanesi kullanılır.
+  Amaç: API Gateway olarak görev yapar, yani istemciden gelen istekleri ilgili mikroservislere yönlendirir.
 
-İçerik: Shop.OcelotGateway klasörü altında yapılandırma dosyaları ve yönlendirme ayarları bulunur.
+  Teknolojiler: Genellikle Ocelot gibi bir API Gateway kütüphanesi kullanılır.
+
+  İçerik: Shop.OcelotGateway klasörü altında yapılandırma dosyaları ve yönlendirme ayarları bulunur.
 
 2. Aspire/
 
-Amaç: Projeye özgü bir modül veya servis olabilir. Adından dolayı Aspire bir frontend framework veya bir servis olabilir.
+  Amaç: Projeye özgü bir modül veya servis olabilir. Adından dolayı Aspire bir frontend framework veya bir servis olabilir.
 
-İçerik: Detaylı bilgi için klasör içeriğine bakmak gerekir.
+  İçerik: Detaylı bilgi için klasör içeriğine bakmak gerekir.
 
 3. Frontends/
 
-Amaç: Kullanıcı arayüzü (UI) bileşenlerini içerir.
+  Amaç: Kullanıcı arayüzü (UI) bileşenlerini içerir.
 
-İçerik: Web tabanlı frontend uygulamaları burada yer alır. Örneğin, React, Angular veya Vue.js gibi modern JavaScript frameworkleriyle geliştirilmiş olabilir.
+  İçerik: Web tabanlı frontend uygulamaları burada yer alır. Örneğin, React, Angular veya Vue.js gibi modern JavaScript frameworkleriyle geliştirilmiş olabilir.
 
 4. IdentityServer/
 
-Amaç: Kimlik doğrulama ve yetkilendirme işlemlerini yönetir.
+  Amaç: Kimlik doğrulama ve yetkilendirme işlemlerini yönetir.
 
-Teknolojiler: IdentityServer4 veya benzeri bir kimlik yönetim kütüphanesi kullanılır.
+  Teknolojiler: IdentityServer4 veya benzeri bir kimlik yönetim kütüphanesi kullanılır.
 
-İçerik: Shop.IdentityServer klasörü altında kullanıcı yönetimi, JWT token üretimi ve OAuth2/OpenID Connect yapılandırmaları bulunur.
+  İçerik: Shop.IdentityServer klasörü altında kullanıcı yönetimi, JWT token üretimi ve OAuth2/OpenID Connect yapılandırmaları bulunur.
 
 5. Services/
 
-Amaç: Mikroservislerin ana işlevselliğini barındırır.
+  Amaç: Mikroservislerin ana işlevselliğini barındırır.
 
-İçerik: E-ticaret platformunun farklı iş alanlarına hizmet eden mikroservisler burada yer alır. Örneğin:
+  İçerik: E-ticaret platformunun farklı iş alanlarına hizmet eden mikroservisler burada yer alır. Örneğin:
 
-ProductService: Ürün yönetimi
+    ProductService: Ürün yönetimi
 
-OrderService: Sipariş yönetimi
+    OrderService: Sipariş yönetimi
 
-InventoryService: Stok yönetimi
+    InventoryService: Stok yönetimi
 
-PaymentService: Ödeme işlemleri
+    PaymentService: Ödeme işlemleri
 
-ShippingService: Kargo ve teslimat işlemleri
+    ShippingService: Kargo ve teslimat işlemleri
+
 🛠️ Kullanılan Teknolojiler
 
 • .Net Blazor 8.0
