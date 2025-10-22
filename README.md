@@ -7,32 +7,38 @@ Modern mikroservis mimarisi ile geliştirilmiş e-ticaret platformu.
 Bu proje **Clean Architecture** ve **Domain Driven Design** prensiplerine uygun olarak tasarlanmış mikroservis tabanlı bir e-ticaret sistemidir.
 
 ### Teknolojiler
-- **.NET 6**
-- **ASP.NET Core Web API**
-- **IdentityServer4** (Kimlik doğrulama)
-- **Ocelot** (API Gateway)
-- **.NET Aspire** (Orkestrasyon)
-- **SignalR** (Gerçek zamanlı iletişim)
-- **MongoDB** (Veri depolama)
+- **.NET 6/8** - Backend ve Frontend
+- **ASP.NET Core Web API** - Mikroservis API'leri
+- **Blazor Server** - Modern web arayüzü (AdminUI)
+- **ASP.NET Core MVC** - WebUI frontend
+- **IdentityServer4** - Kimlik doğrulama ve yetkilendirme
+- **Ocelot** - API Gateway
+- **.NET Aspire** - Servis orkestrasyonu
+- **SignalR** - Gerçek zamanlı iletişim
+- **PostgreSQL** - İlişkisel veritabanı (Message, Order servisleri)
+- **SQL Server** - İlişkisel veritabanı (IdentityServer, Discount servisleri)
+- **MongoDB** - NoSQL veritabanı (Catalog servisi)
+- **Redis** - Cache ve sepet yönetimi
 
 ## 📦 Mikroservisler
 
 ### Backend Servisleri
-- **Catalog** - Ürün kataloğu yönetimi
-- **Order** - Sipariş işlemleri (Clean Architecture)
-- **Basket** - Sepet yönetimi
+- **Catalog** - Ürün kataloğu yönetimi (MongoDB)
+- **Order** - Sipariş işlemleri (Clean Architecture + PostgreSQL)
+- **Basket** - Sepet yönetimi (Redis)
 - **Payment** - Ödeme işlemleri
 - **Cargo** - Kargo takibi
-- **Discount** - İndirim sistemi
+- **Discount** - İndirim sistemi (SQL Server)
 - **Review** - Ürün değerlendirmeleri
-- **Message** - Mesajlaşma sistemi
+- **Message** - Mesajlaşma sistemi (PostgreSQL)
 - **Images** - Resim yönetimi
 - **SignalR** - Gerçek zamanlı bildirimler
 
 ### Frontend Uygulamaları
-- **WebUI** - Müşteri arayüzü
-- **AdminUI** - Yönetici paneli
+- **WebUI** - Müşteri arayüzü (ASP.NET Core MVC)
+- **AdminUI** - Yönetici paneli (Blazor Server)
 - **ServiceDistribute** - Servis dağıtım katmanı
+- **Aspire Web** - Aspire dashboard (Blazor Server)
 
 ### Altyapı Servisleri
 - **IdentityServer** - Kimlik doğrulama ve yetkilendirme
@@ -42,9 +48,13 @@ Bu proje **Clean Architecture** ve **Domain Driven Design** prensiplerine uygun 
 ## 🚀 Çalıştırma
 
 ### Gereksinimler
-- .NET 6 SDK
+- .NET 6/8 SDK
 - Visual Studio 2022 veya VS Code
-- MongoDB
+- **Veritabanları:**
+  - MongoDB (Catalog servisi için)
+  - PostgreSQL (Message, Order servisleri için)
+  - SQL Server (IdentityServer, Discount servisleri için)
+  - Redis (Sepet yönetimi için)
 
 ### Aspire ile Çalıştırma (Önerilen)
 ```bash
@@ -68,9 +78,14 @@ Proje **Clean Architecture** prensiplerine uygun olarak geliştirilmiştir:
 ## 📝 Özellikler
 
 - ✅ Mikroservis mimarisi
+- ✅ **Blazor Server** ile modern admin paneli
+- ✅ **ASP.NET Core MVC** ile müşteri arayüzü
 - ✅ JWT tabanlı kimlik doğrulama
 - ✅ API Gateway ile yönlendirme
-- ✅ Gerçek zamanlı bildirimler
+- ✅ **Redis** ile hızlı sepet yönetimi
+- ✅ **PostgreSQL** ile güvenilir veri depolama
+- ✅ **MongoDB** ile esnek ürün kataloğu
+- ✅ Gerçek zamanlı bildirimler (SignalR)
 - ✅ Clean Architecture
 - ✅ Docker desteği (Aspire ile)
 - ✅ Swagger API dokümantasyonu
@@ -79,10 +94,23 @@ Proje **Clean Architecture** prensiplerine uygun olarak geliştirilmiştir:
 
 ```
 ├── Services/          # Mikroservisler
+│   ├── Catalog/       # Ürün kataloğu (MongoDB)
+│   ├── Order/         # Sipariş (Clean Architecture + PostgreSQL)
+│   ├── Basket/        # Sepet (Redis)
+│   ├── Payment/       # Ödeme
+│   ├── Cargo/         # Kargo
+│   ├── Discount/      # İndirim (SQL Server)
+│   ├── Review/        # Değerlendirme
+│   ├── Message/       # Mesajlaşma (PostgreSQL)
+│   ├── Images/        # Resim yönetimi
+│   └── SignalR/       # Gerçek zamanlı bildirimler
 ├── Frontends/         # Frontend uygulamaları
+│   ├── Shop.WebUI/    # Müşteri arayüzü (MVC)
+│   ├── Shop.AdminUI/  # Admin paneli (Blazor Server)
+│   └── ServiceDistribute/ # Servis katmanı
 ├── IdentityServer/    # Kimlik doğrulama servisi
 ├── ApiGateway/        # Ocelot Gateway
 └── Aspire/           # Servis orkestrasyonu
-```
-
-
+    ├── AppHost/       # Ana orkestratör
+    ├── Web/           # Aspire dashboard (Blazor)
+    └── ServiceDefaults/ # Varsayılan servisler
